@@ -1,9 +1,8 @@
 {
-  "name": "express_react",
+  "name": "express",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "proxy": "http://127.0.0.1:8333",
   "scripts": {
     "dev": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
