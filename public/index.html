@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></=>
+    <title>Document</title>
+</head>
+<body>
+    <div class = "container-sm text-center">
+        <img src="http://cloudacademy.fcu.edu.tw/wp-content/uploads/2019/07/fcul_red_web_20190711-1.png"/>
+        <form>
+            <input type="text" class="form-control" placeholder = "請輸入書名" id="input"/>
+            <button type="submit" id = "get" style="display: none;">GET</button>
+            <button type="submit" class="btn btn-primary" id = "post">搜尋</button>  <!--from the frontend to the backend -->
+        </form>
+        <div class="container-sm" id = result>
+    </div>
+
+    </div>
+
+    <script>
+        const getBtn = document.getElementById('get')
+        const postBtn = document.getElementById('post')
+        const input = document.getElementById('input')
+        const showRes = document.getElementById('result')
+        
+        getBtn.addEventListener('click', getInfo)
+        postBtn.addEventListener('click', postInfo)
+
+        const baseUrl = 'http://localhost:8333/'
+        async function getInfo(e) {
+            e.preventDefault()
+            const res = await fetch(baseUrl + 'info/james?key='+ input.value, {
+                method: 'GET',
+                headers: {
+
+                }
+            })
+            console.log(res)
+            const data = await res.json()
+            showRes.textContent = data.status
+        }
+
+        async function postInfo(e) {
+            e.preventDefault()
+            if(input.value == '') {return}
+            const res = await fetch(baseUrl, {
+                method: 'POST',
+                headers: {
+                    "Content-Type": 'application/json',
+                },
+                body: JSON.stringify({
+                    parcel: input.value
+                })
+            })
+            const data = await res.json()
+            console.log(data)
+            if(data.info == "Book not found")
+            {
+                showRes.textContent = "沒有結果，圖書館沒有該館藏或是尚未登陸於本系統"
+            }
+            else
+            {
+                let payload = data.info.split(',')
+                let title = payload[0]
+                let detail = payload[1]
+                let cover = payload[2]
+                let link = payload[3]
+                showRes.innerHTML = `<div class="card" style="width: 18rem;">
+                                        <img src=${cover} class="card-img-top" alt="...">
+                                        <div class="card-body">
+                                            <h5 class="card-title">${title}</h5>
+                                            <p class="card-text">${detail}</p>
+                                            <a href=${link} class="btn btn-primary">外部連結</a>
+                                        </div>
+                                        </div>`
+            }
+        }
+    </script>
+</body>
+</html>
